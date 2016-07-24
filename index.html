@@ -176,6 +176,8 @@
             flag_canrotate = false; 
         }
 
+        // TODO: create the behavior responsile to check the checkConstraintBottomCorner in case of rotate request near of bottom corner.
+
         return flag_canrotate;
     }
 
@@ -218,6 +220,29 @@
                     flag_canmove = false;
                     break;
                 }
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+
+    function DetectCollisionOnTileInMovementToBottom(piece_angle) {
+        var flag_canmove = true;
+        //console.log('------------');
+        for (let l = 0; l < 3; l++) {
+            for (let c = 0; c < 3; c++) {
+                if (pieces[current_piece][piece_angle][l][c] > 0) {
+                    let absolute_x = (pos_x) + (c*delta);
+                    let absolute_y = (pos_y + delta) + (l*delta);
+                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
+                    let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
+                    //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
+                    //console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
+                    //console.log(tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos]);
+                    if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
+                        flag_canmove = false;
+                        break;
+                    }
                 }             
             }
         }
@@ -287,7 +312,7 @@
         }
         else if (e.keyCode == '40') {
             // down arrow        
-            if (checkConstraintBottomCorner()) {
+            if (checkConstraintBottomCorner() && DetectCollisionOnTileInMovementToBottom(current_angle)) {
                 pos_y = pos_y + delta;
             }
         }
