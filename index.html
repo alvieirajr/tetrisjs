@@ -26,7 +26,7 @@
     var map_width_in_pieces = 15;
     var map_height_in_pieces = 30;
     var map_width_in_pixels = delta * map_width_in_pieces; 
-    var map_height_in_pixels = delta * map_height_in_pieces;
+    var map_height_in_pixels = delta * map_height_in_pieces;  
     var pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
     var pos_y = 0; 
     var flag_auto = false;
@@ -184,16 +184,10 @@
         for (let l = 0; l < 3; l++) {
             for (let c = 0; c < 3; c++) {
                 if (pieces[current_piece][angle][l][c] > 0) {
-                if (pos_x + delta_x + (c*delta) <= 0) {
-                    flag_canmove = false;
-                    /*
-                    console.log('angle = '+angle);
-                    console.log('pos_x = '+pos_x);
-                    console.log('c = '+c);
-                    console.log('l = '+l);
-                    */
-                    break;
-                }
+                    if (pos_x + delta_x + (c*delta) <= 0) {
+                        flag_canmove = false;
+                        break;
+                    }
                 }             
             }
         }
@@ -230,6 +224,29 @@
         return flag_canmove;
     }
 
+    function checkConstraintLeftCornerCollision(piece_angle) {
+        var flag_canmove = true;
+        //console.log('------------');
+        for (let l = 0; l < 3; l++) {
+            for (let c = 0; c < 3; c++) {
+                if (pieces[current_piece][piece_angle][l][c] > 0) {
+                    let absolute_x = (pos_x-delta) + (c*delta);
+                    let absolute_y = pos_y + (l*delta);
+                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
+                    let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
+                    //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
+                    //console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
+                    //console.log(tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos]);
+                    if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
+                        flag_canmove = false;
+                        break;
+                    }
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+
     function checkKey(e) {
 
         e = e || window.event;
@@ -237,11 +254,11 @@
         if (e.keyCode == '38') {
             // up arrow
             if (checkConstraintCanRotate()) {
-            current_angle++;
-    //           checkAngles(current_piece, current_angle);
-            if (checkAngles2(current_piece, current_angle)) {
-                current_angle = 0;    
-            }
+                current_angle++;
+                // checkAngles(current_piece, current_angle);
+                if (checkAngles2(current_piece, current_angle)) {
+                    current_angle = 0;    
+                }
             }
         }
         else if (e.keyCode == '40') {
@@ -251,53 +268,19 @@
             }
         }
         else if (e.keyCode == '37') {
-            // left arrow
-            if (checkConstraintLeftCorner(current_angle)) {
+            // left arrow            
+            if (checkConstraintLeftCorner(current_angle) && checkConstraintLeftCornerCollision(current_angle)) {
                 pos_x = pos_x - delta; 
             }
+            
         }
         else if (e.keyCode == '39') {
-        // right arrow
-        if (checkConstraintRightCorner(current_angle)) {
-            pos_x = pos_x + delta;
-        }
+            // right arrow
+            if (checkConstraintRightCorner(current_angle)) {
+                pos_x = pos_x + delta;
+            }
         }
     }
-
-    function checkAngles(piece_type, angle) {
-    switch (piece_type) {
-        case 'lshape': 
-        if (angle > 3) {
-            current_angle = 0;       
-        }
-        break;
-        case 'box':  {
-        current_angle = 0;       
-        break;
-        }   
-        case 'line':  {
-        if (angle > 1) {
-            current_angle = 0;       
-        }
-        break;
-        }       
-        case 'tshape' : {
-        if (angle > 3) {
-            current_angle = 0;       
-        }
-        break;       
-        }
-        case 'slshape', 'srshape' : {
-        if (angle > 1) {
-            current_angle = 0;       
-        }
-        break;       
-        }                     
-        default:
-        break;   
-    }
-    }
-
 
     function checkAngles2(piece_type, angle) {
     let flag_reset_angle = false;
