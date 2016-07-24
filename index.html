@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="description" content="[My First Tetris in JS]">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  
+  <title></title>
+
+</head>
+<body>
+
+<canvas></canvas>
+
+<script>    
+    "use strict";
+    var canvas = document.querySelector("canvas");
+    var mapa = canvas.getContext("2d");
+    var tile = canvas.getContext("2d");
+    var colors = ['#27A4DD', '#9DD5C0', '#F39CC3', '#F1646C', '#FAC174'];
+    var current_color = 2;
+
+
+
+    var delta = 15;
+    var map_width_in_pieces = 15;
+    var map_height_in_pieces = 30;
+    var map_width_in_pixels = delta * map_width_in_pieces; 
+    var map_height_in_pixels = delta * map_height_in_pieces;
+    var pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
+    var pos_y = 0; 
+    var flag_auto = false;
+    
+
+    var tile_map = new Array(map_height_in_pieces);
+
+    var current_piece = 'tshape';
+    var current_angle = 0;
+
+    // my object literal to keep all pieces patterns.
+
+    var pieces = {  
+    tshape : [
+    [
+    [0,1,0,0], 
+    [1,1,1,0],
+    [0,0,0,0],
+    [0,0,0,0]   
+    ],
+    [
+    [0,1,0,0], 
+    [1,1,0,0],
+    [0,1,0,0],
+    [0,0,0,0]   
+    ],
+    [
+    [0,0,0,0], 
+    [1,1,1,0],
+    [0,1,0,0],
+    [0,0,0,0]   
+    ],
+    [
+    [0,1,0,0], 
+    [0,1,1,0],
+    [0,1,0,0],
+    [0,0,0,0]]
+    ],
+    line : [[
+    [0,1,0,0],
+    [0,1,0,0],
+    [0,1,0,0],
+    [0,1,0,0]], 
+    [
+    [0,0,0,0], 
+    [1,1,1,1],
+    [0,0,0,0],
+    [0,0,0,0]   
+    ]],
+    box :  [[
+    [0,0,0,0], 
+    [0,1,1,0],
+    [0,1,1,0],
+    [0,0,0,0]   
+    ]],  
+    lshape : [[ 
+    [1,1,1,0],  
+    [1,0,0,0],  
+    [0,0,0,0],
+    [0,0,0,0]
+    ], 
+    [
+    [1,0,0,0],
+    [1,0,0,0],
+    [1,1,0,0], 
+    [0,0,0,0]   
+    ], [
+    [0,0,0,0], 
+    [0,0,1,0],
+    [1,1,1,0],
+    [0,0,0,0]   
+    ], [
+    [0,1,1,0],
+    [0,0,1,0],
+    [0,0,1,0],
+    [0,0,0,0]   
+    ]], 
+    slshape : [[
+    [1,0,0,0],
+    [1,1,0,0],
+    [0,1,0,0],
+    [0,0,0,0]   
+    ], [
+    [0,1,1,0], 
+    [1,1,0,0], 
+    [0,0,0,0],
+    [0,0,0,0]]  
+    ], 
+    srshape : [[
+    [0,1,0,0],
+    [1,1,0,0],
+    [1,0,0,0],
+    [0,0,0,0]   
+    ], [
+    [1,1,0,0], 
+    [0,1,1,0], 
+    [0,0,0,0],
+    [0,0,0,0]]  
+    ]
+    };
+
+    document.onkeydown = checkKey;
+
+
+    function initMap(){ 
+
+
+
+    //console.log(tile_map.length); 
+
+    for (let l = 0; l < tile_map.length; l++) {
+            tile_map[l] = new Array(map_width_in_pieces);
+
+        for (let c = 0; c < tile_map[l].length; c++) {
+    //console.log('c = ' + c);     
+    //console.log('l = ' + l);   
+        tile_map[l][c] = 0  
+
+        }
+
+    
+    }
+
+    tile_map[0][0] = 1;
+    tile_map[0][map_width_in_pieces-1] = 2;
+    tile_map[map_height_in_pieces-1][0] = 3;
+    tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
+    
+    }
+
+    function checkConstraintCanRotate() {
+        let flag_canrotate = true;
+        let temp_current_angle = current_angle;
+
+        temp_current_angle++;
+        if (checkAngles2(current_piece, temp_current_angle)) {
+            temp_current_angle = 0;    
+
+        }
+        //console.log(temp_current_angle);
+
+        if (!checkConstraintLeftCorner(temp_current_angle, delta)) { 
+            flag_canrotate = false; 
+        }
+
+        if (!checkConstraintRightCorner(temp_current_angle, delta)){
+            flag_canrotate = false; 
+        }
+
+        return flag_canrotate;
+    }
+
+    function checkConstraintLeftCorner(angle, delta_x = 0) {
+        var flag_canmove = true;
+        for (let l = 0; l < 3; l++) {
+            for (let c = 0; c < 3; c++) {
+                if (pieces[current_piece][angle][l][c] > 0) {
+                if (pos_x + delta_x + (c*delta) <= 0) {
+                    flag_canmove = false;
+                    /*
+                    console.log('angle = '+angle);
+                    console.log('pos_x = '+pos_x);
+                    console.log('c = '+c);
+                    console.log('l = '+l);
+                    */
+                    break;
+                }
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+
+    function checkConstraintRightCorner(angle, delta_x = 0) {
+        var flag_canmove = true;
+        for (let l = 0; l < 3; l++) {
+            for (let c = 0; c < 3; c++) {
+                if (pieces[current_piece][angle][l][c] > 0) {
+                if ((pos_x - delta_x + (c*delta) + delta) == map_width_in_pixels) {
+                    flag_canmove = false;
+                    break;
+                }
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+
+    function checkConstraintBottomCorner(modifier) {
+        var flag_canmove = true;
+        for (let l = 0; l < 3; l++) {
+            for (let c = 0; c < 3; c++) {
+                if (pieces[current_piece][current_angle][l][c] > 0) {
+                if ((pos_y + (l*delta) + delta) == map_height_in_pixels) {
+                    flag_canmove = false;
+                    break;
+                }
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+
+    function checkKey(e) {
+
+        e = e || window.event;
+
+        if (e.keyCode == '38') {
+            // up arrow
+            if (checkConstraintCanRotate()) {
+            current_angle++;
+    //           checkAngles(current_piece, current_angle);
+            if (checkAngles2(current_piece, current_angle)) {
+                current_angle = 0;    
+            }
+            }
+        }
+        else if (e.keyCode == '40') {
+            // down arrow        
+            if (checkConstraintBottomCorner()) {
+                pos_y = pos_y + delta;
+            }
+        }
+        else if (e.keyCode == '37') {
+            // left arrow
+            if (checkConstraintLeftCorner(current_angle)) {
+                pos_x = pos_x - delta; 
+            }
+        }
+        else if (e.keyCode == '39') {
+        // right arrow
+        if (checkConstraintRightCorner(current_angle)) {
+            pos_x = pos_x + delta;
+        }
+        }
+    }
+
+    function checkAngles(piece_type, angle) {
+    switch (piece_type) {
+        case 'lshape': 
+        if (angle > 3) {
+            current_angle = 0;       
+        }
+        break;
+        case 'box':  {
+        current_angle = 0;       
+        break;
+        }   
+        case 'line':  {
+        if (angle > 1) {
+            current_angle = 0;       
+        }
+        break;
+        }       
+        case 'tshape' : {
+        if (angle > 3) {
+            current_angle = 0;       
+        }
+        break;       
+        }
+        case 'slshape', 'srshape' : {
+        if (angle > 1) {
+            current_angle = 0;       
+        }
+        break;       
+        }                     
+        default:
+        break;   
+    }
+    }
+
+
+    function checkAngles2(piece_type, angle) {
+    let flag_reset_angle = false;
+    switch (piece_type) {
+        case 'lshape': 
+        if (angle > 3) {
+            flag_reset_angle = true;
+        }
+        break;
+        case 'box':  {
+            flag_reset_angle = true;
+        break;
+        }   
+        case 'line':  {
+        if (angle > 1) {
+            flag_reset_angle = true; 
+        }
+        break;
+        }       
+        case 'tshape' : {
+        if (angle > 3) {
+            flag_reset_angle = true; 
+        }
+        break;       
+        }
+        case 'slshape', 'srshape' : {
+        if (angle > 1) {
+            flag_reset_angle = true; 
+        }
+        break;       
+        }                     
+        default:
+        break;   
+    }
+    return flag_reset_angle;
+    }
+
+
+
+    initMap();
+
+    setInterval(function(){  
+    redraw(mapa, tile);
+    }, 100);
+
+
+    function renderPiece(mapa, tile) {
+    tile.fillStyle = colors[current_color];
+    
+    for (let l = 0; l < 4; l++) {
+        for (let c = 0; c < 4; c++) {
+        //console.log('l = ' + l + ' c = ' + c);
+        if (pieces[current_piece][current_angle][l][c] == 1) {             
+            tile.fillRect(pos_x+(c*delta), pos_y+(l*delta), delta, delta);    
+        }
+        }
+    }
+    
+    }
+
+
+    function renderMap() {
+
+
+        for (let l = 0; l < map_height_in_pieces; l++) {
+        for (let c = 0; c < map_width_in_pieces; c++) {
+
+    if (tile_map[l][c] > 0) {
+
+        mapa.fillStyle = colors[tile_map[l][c]];
+        mapa.fillRect((c*delta), (l*delta), delta, delta);   
+
+    }
+        
+        }
+    }
+
+    }
+
+
+    function redraw (mapa, tile) {
+    if (flag_auto) { pos_y = pos_y + delta; }
+    
+    canvas.width = map_width_in_pixels;
+    canvas.height  = map_height_in_pixels;
+
+    mapa.fillStyle = "#C7C4BF";
+    mapa.fillRect(0, 0, map_width_in_pixels, map_height_in_pixels );
+    
+    renderMap(); 
+    
+
+
+    renderPiece(mapa, tile);
+    
+        
+
+    }    
+</script>    
+
+</body>
+</html>
