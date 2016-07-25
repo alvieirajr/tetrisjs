@@ -34,7 +34,7 @@
 
     var tile_map = new Array(map_height_in_pieces);
 
-    var current_piece = 'srshape';
+    var current_piece = 'slshape';
     var current_angle = 0;
 
     // my object literal to keep all pieces patterns.
@@ -159,6 +159,7 @@
 
     function checkConstraintCanRotate() {
         let flag_canrotate = true;
+        
         let temp_current_angle = current_angle;
 
         temp_current_angle++;
@@ -166,25 +167,29 @@
             temp_current_angle = 0;    
 
         }
-        //console.log(temp_current_angle);
+   //     console.log(temp_current_angle);
 
         if (!checkConstraintLeftCorner(temp_current_angle, delta)) { 
+            //flag_canrotate = false; 
+        }
+
+        if (!checkConstraintRightCorner(temp_current_angle, delta)) {
             flag_canrotate = false; 
         }
 
-        if (!checkConstraintRightCorner(temp_current_angle, delta)){
-            flag_canrotate = false; 
+        if (!checkConstraintBottomCorner(temp_current_angle, delta)) {
+            //flag_canrotate = false; 
         }
 
-        // TODO: create the behavior responsile to check the checkConstraintBottomCorner in case of rotate request near of bottom corner.
+        // TODO: create the behavior responsible to check detect collision on another tile in case rotate.
 
         return flag_canrotate;
     }
 
     function checkConstraintLeftCorner(angle, delta_x = 0) {
         var flag_canmove = true;
-        for (let l = 0; l < 3; l++) {
-            for (let c = 0; c < 3; c++) {
+        for (let l = 0; l <= 3; l++) {
+            for (let c = 0; c <= 3; c++) {
                 if (pieces[current_piece][angle][l][c] > 0) {
                     if (pos_x + delta_x + (c*delta) <= 0) {
                         flag_canmove = false;
@@ -198,48 +203,30 @@
 
     function checkConstraintRightCorner(angle, delta_x = 0) {
         var flag_canmove = true;
-        for (let l = 0; l < 3; l++) {
-            for (let c = 0; c < 3; c++) {
-                if (pieces[current_piece][angle][l][c] > 0) {
-                if ((pos_x - delta_x + (c*delta) + delta) == map_width_in_pixels) {
-                    flag_canmove = false;
-                    break;
-                }
-                }             
-            }
-        }
-        return flag_canmove;
-    }
 
-    function checkConstraintBottomCorner(modifier) {
-        var flag_canmove = true;
-        for (let l = 0; l < 3; l++) {
-            for (let c = 0; c < 3; c++) {
+        for (let l = 0; l <= 3; l++) {
+            for (let c = 0; c <= 3; c++) {
                 if (pieces[current_piece][current_angle][l][c] > 0) {
-                if ((pos_y + (l*delta) + delta) == map_height_in_pixels) {
-                    flag_canmove = false;
-                    break;
+                    let absolute_x = (pos_x) + (c*delta);
+                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;                   
+                    if (absolute_tile_horizontal_pos == map_width_in_pieces) {
+                        flag_canmove = false;
+                        //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
+                    }                    
+                    // console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
                 }
-                }             
             }
         }
+
         return flag_canmove;
     }
 
-    function DetectCollisionOnTileInMovementToBottom(piece_angle) {
+    function checkConstraintBottomCorner(angle, delta_y = 0) {
         var flag_canmove = true;
-        //console.log('------------');
-        for (let l = 0; l < 3; l++) {
-            for (let c = 0; c < 3; c++) {
-                if (pieces[current_piece][piece_angle][l][c] > 0) {
-                    let absolute_x = (pos_x) + (c*delta);
-                    let absolute_y = (pos_y + delta) + (l*delta);
-                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
-                    let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
-                    //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
-                    //console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
-                    //console.log(tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos]);
-                    if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
+        for (let l = 0; l <= 3; l++) {
+            for (let c = 0; c <= 3; c++) {
+                if (pieces[current_piece][angle][l][c] > 0) {
+                    if ((pos_y - delta + (l*delta) + delta) == map_height_in_pixels) {
                         flag_canmove = false;
                         break;
                     }
@@ -249,11 +236,41 @@
         return flag_canmove;
     }
 
+    function DetectCollisionOnTileInMovementToBottom(piece_angle) {
+        var flag_canmove = true;
+        //console.log('------------');
+        for (let l = 0; l <= 3; l++) {
+            for (let c = 0; c <= 3; c++) {
+                if (pieces[current_piece][piece_angle][l][c] > 0) {
+                    let absolute_x = (pos_x) + (c*delta);
+                    let absolute_y = (pos_y + delta) + (l*delta);
+                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
+                    let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
+                    console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
+                    console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
+                    //console.log(tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos]);
+
+                    if (absolute_tile_vertical_pos >= map_height_in_pieces) {
+                        flag_canmove = false;
+                        break;                    
+                    } 
+                    
+                    if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
+                        flag_canmove = false;
+                        break;
+                    }
+                    
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+
     function DetectCollisionOnTileInMovementToLeft(piece_angle) {
         var flag_canmove = true;
         //console.log('------------');
-        for (let l = 0; l < 3; l++) {
-            for (let c = 0; c < 3; c++) {
+        for (let l = 0; l <= 3; l++) {
+            for (let c = 0; c <= 3; c++) {
                 if (pieces[current_piece][piece_angle][l][c] > 0) {
                     let absolute_x = (pos_x-delta) + (c*delta);
                     let absolute_y = pos_y + (l*delta);
@@ -276,8 +293,8 @@
     function DetectCollisionOnTileInMovementToRight(piece_angle) {
         var flag_canmove = true;
         //console.log('------------');
-        for (let l = 0; l < 3; l++) {
-            for (let c = 0; c < 3; c++) {
+        for (let l = 0; l <= 3; l++) {
+            for (let c = 0; c <= 3; c++) {
                 if (pieces[current_piece][piece_angle][l][c] > 0) {
                     let absolute_x = (pos_x+delta) + (c*delta);
                     let absolute_y = pos_y + (l*delta);
@@ -312,22 +329,25 @@
         }
         else if (e.keyCode == '40') {
             // down arrow        
-            if (checkConstraintBottomCorner() && DetectCollisionOnTileInMovementToBottom(current_angle)) {
+            if (checkConstraintBottomCorner(current_angle) ) {//&& DetectCollisionOnTileInMovementToBottom(current_angle)) {
                 pos_y = pos_y + delta;
             }
         }
         else if (e.keyCode == '37') {
             // left arrow            
-            if (checkConstraintLeftCorner(current_angle) && DetectCollisionOnTileInMovementToLeft(current_angle)) {
+            if (checkConstraintLeftCorner(current_angle) ) { //&& DetectCollisionOnTileInMovementToLeft(current_angle)) {
                 pos_x = pos_x - delta; 
             }
             
         }
         else if (e.keyCode == '39') {
             // right arrow
-            if (checkConstraintRightCorner(current_angle) && DetectCollisionOnTileInMovementToRight(current_angle)) {
-                pos_x = pos_x + delta;
+            // if (checkConstraintRightCorner(current_angle) ) { //&& DetectCollisionOnTileInMovementToRight(current_angle)) {
+            pos_x = pos_x + delta;
+            if (!checkConstraintRightCorner(current_angle)) {
+                pos_x = pos_x - delta;
             }
+
         }
     }
 
