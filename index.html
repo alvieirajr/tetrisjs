@@ -184,7 +184,6 @@
                     let absolute_x = (pos_x) + (c*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ; 
                     if (absolute_tile_horizontal_pos < 0) {                      
-                    //if (pos_x + delta_x + (c*delta) <= 0) {
                         flag_canmove = false;
                         break;
                     }
@@ -246,7 +245,7 @@
             for (let c = 0; c < 4; c++) {
                 if (pieces[current_piece][piece_angle][l][c] > 0) {
                     let absolute_x = (pos_x) + (c*delta);
-                    let absolute_y = (pos_y + delta) + (l*delta);
+                    let absolute_y = (pos_y) + (l*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
                     //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
@@ -275,7 +274,7 @@
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
                 if (pieces[current_piece][piece_angle][l][c] > 0) {
-                    let absolute_x = (pos_x-delta) + (c*delta);
+                    let absolute_x = (pos_x) + (c*delta);
                     let absolute_y = pos_y + (l*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
@@ -299,7 +298,7 @@
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
                 if (pieces[current_piece][piece_angle][l][c] > 0) {
-                    let absolute_x = (pos_x+delta) + (c*delta);
+                    let absolute_x = (pos_x) + (c*delta);
                     let absolute_y = pos_y + (l*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
@@ -335,14 +334,14 @@
         else if (e.keyCode == '40') {
             // down arrow     
             pos_y = pos_y + delta;   
-            if (!checkConstraintBottomCorner(current_angle) ) {//&& DetectCollisionOnTileInMovementToBottom(current_angle)) {
+            if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovementToBottom(current_angle)) {
                 pos_y = pos_y - delta;
             }
         }
         else if (e.keyCode == '37') {
             // left arrow
             pos_x = pos_x - delta;            
-            if (!checkConstraintLeftCorner(current_angle) ) { //&& DetectCollisionOnTileInMovementToLeft(current_angle)) {
+            if (!checkConstraintLeftCorner(current_angle) || !DetectCollisionOnTileInMovementToLeft(current_angle)) {
                 pos_x = pos_x + delta; 
             }
             
@@ -350,7 +349,7 @@
         else if (e.keyCode == '39') {
             // right arrow
             pos_x = pos_x + delta;
-            if (!checkConstraintRightCorner(current_angle)) { //&& DetectCollisionOnTileInMovementToRight(current_angle)) {
+            if (!checkConstraintRightCorner(current_angle) || !DetectCollisionOnTileInMovementToRight(current_angle)) {
                 pos_x = pos_x - delta;
             }
 
