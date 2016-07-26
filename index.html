@@ -167,11 +167,12 @@
         flag_canrotate = (
             checkConstraintLeftCorner(temp_current_angle, delta) & 
             checkConstraintRightCorner(temp_current_angle, delta) & 
-            checkConstraintBottomCorner(temp_current_angle, delta)
+            checkConstraintBottomCorner(temp_current_angle, delta) &
+            DetectCollisionOnTileInMovementToBottom(temp_current_angle) &
+            DetectCollisionOnTileInMovementToLeft(temp_current_angle) &
+            DetectCollisionOnTileInMovementToRight(temp_current_angle)
             );
-      
-        // TODO: create the behavior responsible to check detect collision on another tile in case rotate.
-
+     
         return flag_canrotate;
     }
 
