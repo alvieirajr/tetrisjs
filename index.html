@@ -12,14 +12,17 @@
 
 <canvas></canvas>
 
+<script src="pieces.js"></script>    
 <script>    
+
+
+
     "use strict";
     var canvas = document.querySelector("canvas");
     var mapa = canvas.getContext("2d");
     var tile = canvas.getContext("2d");
     var colors = ['#27A4DD', '#9DD5C0', '#F39CC3', '#F1646C', '#FAC174'];
     var current_color = 2;
-
 
 
     var delta = 15;
@@ -36,97 +39,6 @@
 
     var current_piece = 'lshape';
     var current_angle = 0;
-
-    // my object literal to keep all pieces patterns.
-
-    var pieces = {  
-    tshape : [
-    [
-    [0,1,0,0], 
-    [1,1,1,0],
-    [0,0,0,0],
-    [0,0,0,0]   
-    ],
-    [
-    [0,1,0,0], 
-    [1,1,0,0],
-    [0,1,0,0],
-    [0,0,0,0]   
-    ],
-    [
-    [0,0,0,0], 
-    [1,1,1,0],
-    [0,1,0,0],
-    [0,0,0,0]   
-    ],
-    [
-    [0,1,0,0], 
-    [0,1,1,0],
-    [0,1,0,0],
-    [0,0,0,0]]
-    ],
-    line : [[
-    [0,1,0,0],
-    [0,1,0,0],
-    [0,1,0,0],
-    [0,1,0,0]], 
-    [
-    [0,0,0,0], 
-    [1,1,1,1],
-    [0,0,0,0],
-    [0,0,0,0]   
-    ]],
-    box :  [[
-    [0,0,0,0], 
-    [0,1,1,0],
-    [0,1,1,0],
-    [0,0,0,0]   
-    ]],  
-    lshape : [[ 
-    [1,1,1,0],  
-    [1,0,0,0],  
-    [0,0,0,0],
-    [0,0,0,0]
-    ], 
-    [
-    [1,0,0,0],
-    [1,0,0,0],
-    [1,1,0,0], 
-    [0,0,0,0]   
-    ], [
-    [0,0,0,0], 
-    [0,0,1,0],
-    [1,1,1,0],
-    [0,0,0,0]   
-    ], [
-    [0,1,1,0],
-    [0,0,1,0],
-    [0,0,1,0],
-    [0,0,0,0]   
-    ]], 
-    slshape : [[
-    [1,0,0,0],
-    [1,1,0,0],
-    [0,1,0,0],
-    [0,0,0,0]   
-    ], [
-    [0,1,1,0], 
-    [1,1,0,0], 
-    [0,0,0,0],
-    [0,0,0,0]]  
-    ], 
-    srshape : [[
-    [0,1,0,0],
-    [1,1,0,0],
-    [1,0,0,0],
-    [0,0,0,0]   
-    ], [
-    [1,1,0,0], 
-    [0,1,1,0], 
-    [0,0,0,0],
-    [0,0,0,0]]  
-    ]
-    };
 
     document.onkeydown = checkKey;
 
@@ -145,8 +57,9 @@
 
     tile_map[0][0] = 1;
     tile_map[0][map_width_in_pieces-1] = 2;
-    tile_map[map_height_in_pieces-1][0] = 3;
+    tile_map[map_height_in_pieces-1][0] = 3;    
     tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
+    tile_map[15][7] = 3;    
     
     }
 
@@ -215,6 +128,8 @@
 
         return flag_canmove;
     }
+    
+   
 
     function checkConstraintBottomCorner(angle, delta_y) {
         delta_y = delta_y || 0;        
@@ -226,7 +141,8 @@
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
                     //console.log(absolute_tile_vertical_pos);          
                     if (absolute_tile_vertical_pos == map_height_in_pieces) {
-                        flag_canmove = false;
+                        flag_canmove = false;                       
+                        
                         break;
                     }             
                     //if ((pos_y - delta + (l*delta) + delta) == map_height_in_pixels) {
