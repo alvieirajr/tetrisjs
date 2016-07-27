@@ -129,7 +129,38 @@
         return flag_canmove;
     }
     
-   
+    // TODO: after call reset() adjust the piece position to not overlap the top corner.
+    
+    // TODO: verify if is possible use stackup without adjust the post_y value with -delta.
+    
+    // TODO: random piece.
+    
+    // TODO: random piece angle
+        
+    // TODO: random piece color.
+    
+    // TODO: stackup over collision detect on some tile.
+    
+    function reset() { 
+        pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
+        pos_y = 0;         
+    }
+    
+    function stackup(angle) {
+        for (let l = 0; l < 4; l++) {
+            for (let c = 0; c < 4; c++) {
+                if (pieces[current_piece][angle][l][c] > 0) {
+                    let absolute_x = (pos_x) + (c*delta);
+                    let absolute_y = (pos_y - delta) + (l*delta);
+                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
+                    let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
+                    tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] = current_color;//pieces[current_piece][angle][l][c];
+                }
+            }
+        }
+        reset();          
+                        
+    }
 
     function checkConstraintBottomCorner(angle, delta_y) {
         delta_y = delta_y || 0;        
@@ -141,9 +172,9 @@
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
                     //console.log(absolute_tile_vertical_pos);          
                     if (absolute_tile_vertical_pos == map_height_in_pieces) {
-                        flag_canmove = false;                       
-                        
-                        break;
+                        flag_canmove = false;                        
+                        stackup(angle);                        
+                        return flag_canmove;
                     }             
                     //if ((pos_y - delta + (l*delta) + delta) == map_height_in_pixels) {
                       //  flag_canmove = false;
