@@ -197,12 +197,6 @@
                     //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
                     //console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
                     //console.log(tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos]);
-
-                    // TODO: should i remove it ?
-                    if (absolute_tile_vertical_pos >= map_height_in_pieces) {
-                        stackup(piece_angle);
-                        return false;                    
-                    } 
                     
                     if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
                         stackup(piece_angle);                        
