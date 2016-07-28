@@ -59,7 +59,7 @@
     tile_map[0][map_width_in_pieces-1] = 2;
     tile_map[map_height_in_pieces-1][0] = 3;    
     tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
-    tile_map[15][7] = 3;    
+    tile_map[15][12] = 3;    
     
     }
 
@@ -139,8 +139,6 @@
         
     // TODO: random piece color.
     
-    // TODO: stackup over collision detect on some tile.
-    
     function reset() { 
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
         pos_y = 0;         
@@ -200,14 +198,15 @@
                     //console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
                     //console.log(tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos]);
 
+                    // TODO: should i remove it ?
                     if (absolute_tile_vertical_pos >= map_height_in_pieces) {
-                        flag_canmove = false;
-                        break;                    
+                        stackup(piece_angle);
+                        return false;                    
                     } 
                     
                     if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
-                        flag_canmove = false;
-                        break;
+                        stackup(piece_angle);                        
+                        return false;
                     }
                     
                 }             
