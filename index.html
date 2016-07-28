@@ -86,8 +86,7 @@
                     let absolute_x = (pos_x) + (c*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ; 
                     if (absolute_tile_horizontal_pos < 0) {                      
-                        flag_canmove = false;
-                        break;
+                        return false;
                     }
                 }             
             }
@@ -106,7 +105,7 @@
                     let absolute_x = (pos_x) + (c*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;                   
                     if (absolute_tile_horizontal_pos == map_width_in_pieces) {
-                        flag_canmove = false;
+                        return false;
                         //console.log('absolute_tile_horizontal_pos  = ' + absolute_tile_horizontal_pos);
                     }                    
                     // console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
@@ -128,8 +127,6 @@
     // TODO: random piece color.
 
     // TODO: create a queue of pieces changed on each reset() call.
-
-    // BUG: on rotate action in bottom corner trigger a stackup event. 
     
     function reset() { 
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
@@ -144,7 +141,7 @@
                     let absolute_y = (pos_y - delta) + (l*delta);
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
-                    tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] = current_color;//pieces[current_piece][angle][l][c];
+                    tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] = current_color;
                 }
             }
         }
@@ -161,10 +158,8 @@
                     let absolute_y = (pos_y) + (l*delta);
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
                     //console.log(absolute_tile_vertical_pos);          
-                    if (absolute_tile_vertical_pos == map_height_in_pieces) {
-                        flag_canmove = false;                        
-                        stackup(angle);                        
-                        return flag_canmove;
+                    if (absolute_tile_vertical_pos == map_height_in_pieces) {                                          
+                        return false;
                     }             
                 }             
             }
@@ -214,39 +209,35 @@
         e = e || window.event;
 
         if (e.keyCode == '38') {
-            // up arrow
+            // up arrow.
             if (checkConstraintCanRotate()) {
-                // checkAngles(current_piece, current_angle);
+
                 if (checkAngles(current_piece, current_angle)) {
                     current_angle = 0;    
                 } else {
                     current_angle++;
                 }
-                console.log(current_angle);
+                //console.log(current_angle);
            }
         }
         else if (e.keyCode == '40') {
-            // down arrow     
+            // down arrow.     
             pos_y = pos_y + delta;   
-            //if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovementToBottom(current_angle)) {
-            if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovement(current_angle, DIRECTION_TO_BOTTOM)) {                     
+            if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovement(current_angle, DIRECTION_TO_BOTTOM)) {
                 stackup(current_angle);
-                pos_y = pos_y - delta;                
             }
         }
         else if (e.keyCode == '37') {
-            // left arrow
+            // left arrow.
             pos_x = pos_x - delta;            
-            //if (!checkConstraintLeftCorner(current_angle) || !DetectCollisionOnTileInMovementToLeft(current_angle)) {
             if (!checkConstraintLeftCorner(current_angle) || !DetectCollisionOnTileInMovement(current_angle, DIRECTION_TO_LEFT)) {                
                 pos_x = pos_x + delta; 
             }
             
         }
         else if (e.keyCode == '39') {
-            // right arrow
+            // right arrow.
             pos_x = pos_x + delta;
-            //if (!checkConstraintRightCorner(current_angle) || !DetectCollisionOnTileInMovementToRight(current_angle)) {
             if (!checkConstraintRightCorner(current_angle) || !DetectCollisionOnTileInMovement(current_angle, DIRECTION_TO_RIGHT)) {
                 pos_x = pos_x - delta;
             }
@@ -310,8 +301,6 @@
         
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
-                 //console.log('l = ' + l + ' c = ' + c);
-                //console.log('current_angle = ' + current_angle);
                 if (pieces[current_piece][current_angle][l][c] == 1) {             
                     tile.fillRect(pos_x+(c*delta), pos_y+(l*delta), delta, delta);    
                 }
