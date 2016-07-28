@@ -166,10 +166,6 @@
                         stackup(angle);                        
                         return flag_canmove;
                     }             
-                    //if ((pos_y - delta + (l*delta) + delta) == map_height_in_pixels) {
-                      //  flag_canmove = false;
-                      //ç  break;
-                    //}
                 }             
             }
         }
@@ -190,19 +186,16 @@
                     switch (direction) {
                         case DIRECTION_TO_LEFT : {
                             if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] < 0) {
-                                flag_canmove = false;
-                                break;
+                                return false;
                             }    
                         }       
                         case DIRECTION_TO_RIGHT : {
                             if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
-                                flag_canmove = false;
-                                break;
+                                return false;
                             }                                          
                         }                                                 
                         case DIRECTION_TO_BOTTOM : {
-                            if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
-                                stackup(piece_angle);                        
+                            if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {                                                        
                                 return false;
                             }
                         }                                      
@@ -236,9 +229,9 @@
             // down arrow     
             pos_y = pos_y + delta;   
             //if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovementToBottom(current_angle)) {
-            if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovement(current_angle, DIRECTION_TO_BOTTOM)) {    
-                 
-                pos_y = pos_y - delta;
+            if (!checkConstraintBottomCorner(current_angle)  || !DetectCollisionOnTileInMovement(current_angle, DIRECTION_TO_BOTTOM)) {                     
+                stackup(current_angle);
+                pos_y = pos_y - delta;                
             }
         }
         else if (e.keyCode == '37') {
