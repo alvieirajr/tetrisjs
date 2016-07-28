@@ -130,7 +130,8 @@
     
     function reset() { 
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
-        pos_y = 0;         
+        pos_y = 0;   
+        current_color = Math.floor((Math.random() * 5) + 1);      
     }
     
     function stackup(angle) {
