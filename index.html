@@ -15,8 +15,6 @@
 <script src="pieces.js"></script>    
 <script>    
 
-
-
     "use strict";
     var canvas = document.querySelector("canvas");
     var mapa = canvas.getContext("2d");
@@ -138,6 +136,10 @@
     // TODO: random piece angle
         
     // TODO: random piece color.
+
+    // TODO: create a queue of pieces changed on each reset() call.
+
+    // BUG: on rotate action in bottom corner trigger a stackup event. 
     
     function reset() { 
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
@@ -183,6 +185,49 @@
         }
         return flag_canmove;
     }
+
+
+
+ function DetectCollisionOnTileInMovement(piece_angle, direction) {
+        var flag_canmove = true;
+        //console.log('------------');
+        for (let l = 0; l < 4; l++) {
+            for (let c = 0; c < 4; c++) {
+                if (pieces[current_piece][piece_angle][l][c] > 0) {
+                    let absolute_x = (pos_x) + (c*delta);
+                    let absolute_y = (pos_y) + (l*delta);
+                    let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
+                    let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
+
+                    switch (direction) {
+                        case DIRECTION_TO_LEFT : {
+                            if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] < 0) {
+                                flag_canmove = false;
+                                break;
+                            }    
+                        }       
+                        case DIRECTION_TO_RIGHT : {
+                            if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
+                                flag_canmove = false;
+                                break;
+                            }                                          
+                        }                                                 
+                        case DIRECTION_TO_BOTTOM : {
+                            if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] > 0) {
+                                stackup(piece_angle);                        
+                                return false;
+                            }
+                        }                                      
+                        default : {
+
+                        }
+                    }
+                }             
+            }
+        }
+        return flag_canmove;
+    }
+    
 
     function DetectCollisionOnTileInMovementToBottom(piece_angle) {
         var flag_canmove = true;
