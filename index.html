@@ -320,6 +320,10 @@
                 if (tile_map[l][c] > 0) {
                     mapa.fillStyle = colors[tile_map[l][c]];
                     mapa.fillRect((c*delta), (l*delta), delta, delta);   
+                } else {
+                    mapa.strokeStyle = '#FFFFFF';
+                    //mapa.strokeRect((c*delta)+2, (l*delta)+2, delta-2, delta-2);
+                    mapa.strokeRect((c*delta), (l*delta), delta, delta);                       
                 }            
             }
         }
@@ -334,7 +338,8 @@
 
     mapa.fillStyle = background_collor;
     mapa.fillRect(0, 0, map_width_in_pixels, map_height_in_pixels );
-    
+
+
     renderMap(); 
     
 
