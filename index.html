@@ -25,7 +25,7 @@
     var flag_auto = false;
 
     var pieces_list  = [];
-    var pieces_list_length = 4;
+    var pieces_list_length = 3  ;
 
     var tile_map = new Array(map_height_in_pieces);
 
@@ -34,15 +34,26 @@
 
     document.onkeydown = checkKey;
 
+    function pushInPieceList() {
+        pieces_list.push( pieces_type[Math.floor((Math.random() * 4))]);
+    }   
+
+    function giveMeAPiece() {
+        current_piece =  pieces_list.splice(0,1);//pieces_list.slice(0,1);
+        pushInPieceList();     
+        console.log(pieces_list);          
+    }
+
     function fillPiecesList() {
         for (let i = 0; i < pieces_list_length; i++) {
-            pieces_list.push( pieces_type[Math.floor((Math.random() * 4))]);
+            pushInPieceList();  
         }
     }
 
     function initMap() { 
 
         fillPiecesList();
+        console.log(pieces_list);
 
         for (let l = 0; l < tile_map.length; l++) {
             tile_map[l] = new Array(map_width_in_pieces);
@@ -59,7 +70,12 @@
         tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
         tile_map[15][12] = 3;   
 
-        console.log(pieces_list); 
+        //giveMeAPiece();
+
+         
+        //pieces_list = 
+        current_piece = pieces_list.splice(0,1);//pieces_list[0];  
+        console.log(pieces_list);
     
     }
 
@@ -141,10 +157,13 @@
     function reset() { 
         pos_y = delta;           
         current_color = Math.floor((Math.random() * 5)+1);
-        current_piece = pieces_type[Math.floor((Math.random() * 4))];
-        current_angle = 0;  
-    
+        //current_piece = pieces_type[Math.floor((Math.random() * 4))];
+       // current_piece =  pieces_list[0];//pieces_list.pop();
+        //pushInPieceList();
+        current_angle = 0;      
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
+        //console.log(pieces_list);
+        giveMeAPiece();         
     }
     
     function stackup(angle) {
