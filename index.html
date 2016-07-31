@@ -23,7 +23,9 @@
     var pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
     var pos_y = 0; 
     var flag_auto = false;
-    
+
+    var pieces_pull  = [];
+    var pieces_pull_length = 4;
 
     var tile_map = new Array(map_height_in_pieces);
 
@@ -32,7 +34,15 @@
 
     document.onkeydown = checkKey;
 
+    function fillPiecesPull() {
+        for (let i = 0; i < pieces_pull_length; i++) {
+            pieces_pull.push( pieces_type[Math.floor((Math.random() * 4))]);
+        }
+    }
+
     function initMap() { 
+
+        fillPiecesPull();
 
         for (let l = 0; l < tile_map.length; l++) {
             tile_map[l] = new Array(map_width_in_pieces);
@@ -47,7 +57,9 @@
         tile_map[0][map_width_in_pieces-1] = 2;
         tile_map[map_height_in_pieces-1][0] = 3;    
         tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
-        tile_map[15][12] = 3;    
+        tile_map[15][12] = 3;   
+
+        console.log(pieces_pull); 
     
     }
 
@@ -123,6 +135,8 @@
     // TODO: random piece angle        
 
     // TODO: create a queue of pieces changed on each reset() call.
+    
+    // BUG: error on rotate in bottom corner. 
     
     function reset() { 
         pos_y = delta;           
@@ -323,7 +337,7 @@
                 } else {
                     mapa.strokeStyle = '#FFFFFF';
                     //mapa.strokeRect((c*delta)+2, (l*delta)+2, delta-2, delta-2);
-                    mapa.strokeRect((c*delta), (l*delta), delta, delta);                       
+                    //mapa.strokeRect((c*delta), (l*delta), delta, delta);                       
                 }            
             }
         }
