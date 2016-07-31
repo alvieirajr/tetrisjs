@@ -39,7 +39,7 @@
     }   
 
     function giveMeAPiece() {
-        current_piece =  pieces_list.splice(0,1);//pieces_list.slice(0,1);
+        current_piece =  pieces_list.splice(0,1)[0];
         pushInPieceList();     
         console.log(pieces_list);          
     }
@@ -70,11 +70,7 @@
         tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
         tile_map[15][12] = 3;   
 
-        //giveMeAPiece();
-
-         
-        //pieces_list = 
-        current_piece = pieces_list.splice(0,1);//pieces_list[0];  
+        current_piece = pieces_list.splice(0,1)[0];  
         console.log(pieces_list);
     
     }
@@ -285,6 +281,7 @@
 
     function checkAngles(piece_type, angle) {
         let flag_reset_angle = false;
+        //console.log(piece_type  );
         switch (piece_type) {
             case 'lshape': 
             if (angle == 3) {
