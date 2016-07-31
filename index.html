@@ -35,7 +35,7 @@
     document.onkeydown = checkKey;
 
     function pushInPieceList() {
-        pieces_list.push( pieces_type[Math.floor((Math.random() * 4))]);
+        pieces_list.push( pieces_type[Math.floor((Math.random() * 6))]);
     }   
 
     function giveMeAPiece() {
@@ -135,17 +135,11 @@
                     // console.log('absolute_tile_vertical_pos  = ' + absolute_tile_vertical_pos);
                 }
             }
-        }
+        }   
 
         return flag_canmove;
     }
-    
-    // TODO: after call reset() adjust the piece position to not overlap the top corner.
-    
-    // TODO: verify if is possible use stackup without adjust the post_y value with -delta.     
-    
-    // TODO: random piece angle 
-        
+            
     function reset() { 
         pos_y = delta;           
         current_color = Math.floor((Math.random() * 5)+1);
@@ -323,12 +317,10 @@
         return flag_reset_angle;
     }
 
-
-
     initMap();
 
     setInterval(function(){  
-    redraw(mapa, tile);
+        redraw(mapa, tile);
     }, 10);
 
 
