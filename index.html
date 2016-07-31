@@ -155,11 +155,18 @@
 
             if (count == map_width_in_pieces) {
                 console.log('line complete in: ' + line);
+                clearLine(line);
             }   
 
         }
 
     }    
+
+    function clearLine(line) {
+        for (let column = 0; column < map_width_in_pieces; column++) {
+            tile_map[line][column] = 0;
+        }        
+    }
 
     function reset() {
 
