@@ -53,7 +53,7 @@
     function initMap() { 
 
         fillPiecesList();
-        console.log(pieces_list);
+        //console.log(pieces_list);
 
         for (let l = 0; l < tile_map.length; l++) {
             tile_map[l] = new Array(map_width_in_pieces);
@@ -71,7 +71,7 @@
         tile_map[15][12] = 3;   
 
         current_piece = pieces_list.splice(0,1)[0];  
-        console.log(pieces_list);
+        //console.log(pieces_list);
     
     }
 
@@ -144,12 +144,8 @@
     
     // TODO: verify if is possible use stackup without adjust the post_y value with -delta.     
     
-    // TODO: random piece angle        
-
-    // TODO: create a queue of pieces changed on each reset() call.
-    
-    // BUG: error on rotate in bottom corner. 
-    
+    // TODO: random piece angle 
+        
     function reset() { 
         pos_y = delta;           
         current_color = Math.floor((Math.random() * 5)+1);
@@ -207,8 +203,13 @@
                     let absolute_tile_horizontal_pos = parseInt((absolute_x) / delta) ;
                     let absolute_tile_vertical_pos = parseInt((absolute_y) / delta) ;
 
+                    if ((absolute_tile_vertical_pos >= map_height_in_pieces) || 
+                        (absolute_tile_horizontal_pos >= map_width_in_pieces))  {
+                        return false;
+                    }
+
                     switch (direction) {
-                        case DIRECTION_TO_LEFT : {
+                        case DIRECTION_TO_LEFT : {                           
                             if (tile_map[absolute_tile_vertical_pos][absolute_tile_horizontal_pos] < 0) {
                                 return false;
                             }    
