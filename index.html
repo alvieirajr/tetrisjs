@@ -24,6 +24,7 @@
     var pos_y = 0; 
     var flag_auto = false;
 
+    var pieces_color_list  = [];
     var pieces_list  = [];
     var pieces_list_length = 3  ;
 
@@ -36,12 +37,15 @@
 
     function pushInPieceList() {
         pieces_list.push( pieces_type[Math.floor((Math.random() * 6))]);
+        pieces_color_list.push( Math.floor((Math.random() * 5)+1) );
     }   
 
     function giveMeAPiece() {
         current_piece =  pieces_list.splice(0,1)[0];
+        current_color = pieces_color_list.splice(0,1)[0];
         pushInPieceList();     
-        console.log(pieces_list);          
+        console.log(pieces_list);
+        console.log(pieces_color_list);                            
     }
 
     function fillPiecesList() {
@@ -64,43 +68,8 @@
             }
         }
 
-        tile_map[0][0] = 1;
-        tile_map[0][map_width_in_pieces-1] = 2;
-        tile_map[map_height_in_pieces-1][0] = 3;    
-        tile_map[map_height_in_pieces-1][map_width_in_pieces-1] = 4;
-/*
-        tile_map[15][0] = 3;
-        tile_map[15][1] = 3;
-        tile_map[15][2] = 3;
-        tile_map[15][3] = 3;
-        tile_map[15][4] = 3;
-        tile_map[15][5] = 3;
-        tile_map[15][6] = 3;
-        tile_map[15][7] = 3;
-        tile_map[15][8] = 3;
-        tile_map[15][9] = 3;
-        tile_map[15][10] = 3;
-        tile_map[15][11] = 3;
-        tile_map[15][12] = 3;
-        tile_map[15][13] = 3;
-
-
-        tile_map[map_height_in_pieces-1][0] = 3;
-        tile_map[map_height_in_pieces-1][1] = 3;
-        tile_map[map_height_in_pieces-1][2] = 3;
-        tile_map[map_height_in_pieces-1][3] = 3;
-        tile_map[map_height_in_pieces-1][4] = 3;
-        tile_map[map_height_in_pieces-1][5] = 3;
-        tile_map[map_height_in_pieces-1][6] = 3;
-        tile_map[map_height_in_pieces-1][7] = 3;
-        tile_map[map_height_in_pieces-1][8] = 3;
-        tile_map[map_height_in_pieces-1][9] = 3;
-//        tile_map[15][10] = 3;
-        tile_map[map_height_in_pieces-1][11] = 3;
-        tile_map[map_height_in_pieces-1][12] = 3;
-        tile_map[map_height_in_pieces-1][13] = 3;
-*/
         current_piece = pieces_list.splice(0,1)[0];  
+        current_color = pieces_color_list.splice(0,1)[0];
         //console.log(pieces_list);
     
     }
@@ -212,9 +181,8 @@
 
         detectAndDestroyCompleteLines();
 
-
         pos_y = delta;           
-        current_color = Math.floor((Math.random() * 5)+1);
+        //current_color = Math.floor((Math.random() * 5)+1);
         //current_piece = pieces_type[Math.floor((Math.random() * 4))];
         //current_piece =  pieces_list[0];//pieces_list.pop();
         //pushInPieceList();
@@ -257,7 +225,7 @@
         return flag_canmove;
     }
 
- function DetectCollisionOnTileInMovement(piece_angle, direction) {
+    function DetectCollisionOnTileInMovement(piece_angle, direction) {
         var flag_canmove = true;
         //console.log('------------');
         for (let l = 0; l < 4; l++) {
@@ -395,6 +363,34 @@
         redraw(mapa, tile);
     }, 10);
 
+    function renderPieceThatWillCome() {
+
+        tile.fillStyle = colors[pieces_color_list[0]];
+        
+        let pox_x_containner = map_width_in_pixels + delta + delta;
+        let pos_y_containner = delta;
+        
+        for (let l = 0; l < 4; l++) {
+            for (let c = 0; c < 4; c++) {
+                if (pieces[pieces_list[0]][0][l][c] == 1) {             
+                    tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);    
+                }
+            }
+        }    
+
+        tile.fillStyle = colors[pieces_color_list[1]];
+        pox_x_containner = map_width_in_pixels + delta + delta;
+        pos_y_containner = delta*6;
+        
+        for (let l = 0; l < 4; l++) {
+            for (let c = 0; c < 4; c++) {
+                if (pieces[pieces_list[1]][0][l][c] == 1) {             
+                    tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);    
+                }
+            }
+        }            
+
+    }
 
     function renderPiece(mapa, tile) {
         tile.fillStyle = colors[current_color];
@@ -426,22 +422,24 @@
 
 
     function redraw (mapa, tile) {
-    if (flag_auto) { pos_y = pos_y + delta; }
-    
-    canvas.width = map_width_in_pixels;
-    canvas.height  = map_height_in_pixels;
-
-    mapa.fillStyle = background_collor;
-    mapa.fillRect(0, 0, map_width_in_pixels, map_height_in_pixels );
-
-
-    renderMap(); 
-    
-
-
-    renderPiece(mapa, tile);
-    
+        if (flag_auto) { pos_y = pos_y + delta; }
         
+        canvas.width = map_width_in_pixels  + delta + (delta*5);
+        canvas.height  = map_height_in_pixels;
+
+        mapa.fillStyle = background_collor;
+        mapa.fillRect(0, 0, map_width_in_pixels, map_height_in_pixels );
+
+        // draw container of first one piece that will come. 
+        mapa.fillRect(map_width_in_pixels + delta, 0, delta*5, delta*5 );
+        // draw container of second one piece that will come.
+        mapa.fillRect(map_width_in_pixels + delta, delta*6, delta*5, delta*5 );
+
+        renderMap(); 
+
+        renderPiece(mapa, tile);
+        renderPieceThatWillCome();  
+
 
     }    
 </script>    
