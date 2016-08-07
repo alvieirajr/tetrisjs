@@ -38,17 +38,21 @@
 
     function pushInPieceList() {
         pieces_list.push( pieces_type[Math.floor((Math.random() * 6))]);
-        pieces_color_list.push( Math.floor((Math.random() * 5)+1) );        
+        pieces_color_list.push( Math.floor((Math.random() * 5)+1) );
+        pieces_angles_list.push(Math.floor((Math.random() * pieces_type_angles[pieces_type.indexOf(pieces_list[pieces_list.length-1])])));        
     }   
 
     function giveMeAPiece() {
+        
         current_piece =  pieces_list.splice(0,1)[0];
         current_color = pieces_color_list.splice(0,1)[0];
-        //current_angle = pieces_angles_list.splice(0,1)[0];
+        current_angle = pieces_angles_list.splice(0,1)[0];
         
         pushInPieceList();     
         console.log(pieces_list);
         console.log(pieces_color_list);                            
+        console.log(pieces_angles_list);
+
     }
 
     function fillPiecesList() {
@@ -71,9 +75,15 @@
             }
         }
 
+
         current_piece = pieces_list.splice(0,1)[0];  
         current_color = pieces_color_list.splice(0,1)[0];
-        //console.log(pieces_list);
+        current_angle = pieces_angles_list.splice(0,1)[0];
+    
+
+        console.log(pieces_list);
+        console.log(pieces_color_list);                            
+        console.log(pieces_angles_list);
     
     }
 
@@ -183,13 +193,7 @@
     function reset() {
 
         detectAndDestroyCompleteLines();
-
-        pos_y = delta;           
-        //current_color = Math.floor((Math.random() * 5)+1);
-        //current_piece = pieces_type[Math.floor((Math.random() * 4))];
-        //current_piece =  pieces_list[0];//pieces_list.pop();
-        //pushInPieceList();
-        current_angle = 0;      
+        pos_y = delta;              
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
         //console.log(pieces_list);
         giveMeAPiece();         
@@ -318,33 +322,11 @@
     }
 
     function checkAngles(piece_type, angle) {
-        //console.log((angle >= pieces_type_angles[pieces_type.indexOf(piece_type)]-1));
-
-        //console.log();        
-        //console.log(getValidRandomAngle(pieces_type.indexOf(current_piece)));
-        getValidRandomAngle(pieces_type.indexOf(current_piece));
-        return (angle >= pieces_type_angles[pieces_type.indexOf(piece_type)]-1);
-
-        
+       return (angle >= pieces_type_angles[pieces_type.indexOf(piece_type)]-1);
+    
     }
 
-    function getRandomAngle(piece_type) {
-//        console.log(pieces_type_angles[pieces_type.indexOf(current_piece)]);
-
-        //console.log(Math.floor((Math.random() * pieces_type_angles[pieces_type.indexOf(current_piece)])));
-        return Math.floor((Math.random() * pieces_type_angles[pieces_type.indexOf(current_piece)]));        
-    }
-
-    function getValidRandomAngle(piece_type) {
-
-        //console.log(piece_type);
-        let tmp_angle = getRandomAngle(piece_type);      
-        while (checkAngles(piece_type, tmp_angle)) {
-            //console.log(tmp_angle); 
-            tmp_angle = getRandomAngle(current_piece);
-        }              
-        return tmp_angle;    
-    }
+    
 
     initMap();
 
@@ -361,7 +343,7 @@
         
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
-                if (pieces[pieces_list[0]][0][l][c] == 1) {             
+                if (pieces[pieces_list[0]][ pieces_angles_list[0] ][l][c] == 1) {             
                     tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);    
                 }
             }
@@ -373,7 +355,7 @@
         
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
-                if (pieces[pieces_list[1]][0][l][c] == 1) {             
+                if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
                     tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);    
                 }
             }
