@@ -43,7 +43,7 @@
     }   
 
     function giveMeAPiece() {
-        
+
         current_piece =  pieces_list.splice(0,1)[0];
         current_color = pieces_color_list.splice(0,1)[0];
         current_angle = pieces_angles_list.splice(0,1)[0];
@@ -66,7 +66,7 @@
         fillPiecesList();
         //console.log(pieces_list);
 
-        for (let l = 0; l < tile_map.length; l++) {
+        for (let l = 0; l < tile_map.length; l++) { 
             tile_map[l] = new Array(map_width_in_pieces);
             for (let c = 0; c < tile_map[l].length; c++) {
                 //console.log('c = ' + c);     
@@ -75,11 +75,9 @@
             }
         }
 
-
         current_piece = pieces_list.splice(0,1)[0];  
         current_color = pieces_color_list.splice(0,1)[0];
-        current_angle = pieces_angles_list.splice(0,1)[0];
-    
+        current_angle = pieces_angles_list.splice(0,1)[0];    
 
         console.log(pieces_list);
         console.log(pieces_color_list);                            
@@ -154,6 +152,8 @@
 
     function detectAndDestroyCompleteLines() {
 
+        let ret = false;
+
         // detecting from bottom corner to top corne.
 
         let count = 0;
@@ -169,7 +169,9 @@
                 console.log('line complete in: ' + line);
                 clearLine(line);
                 goDownAllMap(line);
-            }   
+                detectAndDestroyCompleteLines()
+                return;
+            } 
 
         }
 
