@@ -328,7 +328,7 @@
 
     initMap();
 
-    setInterval(function(){  
+    setInterval(function() {  
         redraw(mapa, tile);
     }, 10);
 
@@ -342,7 +342,7 @@
         // get the horizontal center.
 
         let hor_center = Math.round((delta * 5) / 2);
-        let ver_center =  Math.round((delta * 5) / 2);
+        let ver_center = Math.round((delta * 5) / 2);
 
         // get the last relative horizontal index tile of piece.
 
@@ -393,7 +393,7 @@
         }        
 
         let hor_piece_bound =  Math.round(((1+max_h_index-min_h_index) * delta) / 2) ;
-               let ver_piece_bound =  Math.round(((1+max_v_index-min_v_index) * delta) / 2) ;
+        let ver_piece_bound =  Math.round(((1+max_v_index-min_v_index) * delta) / 2) ;
 
         pox_x_containner = pox_x_containner + hor_center - delta - hor_piece_bound;       
         pos_y_containner = pos_y_containner + ver_center - delta - ver_piece_bound;  
@@ -408,17 +408,78 @@
             }
         }    
 
+        ///
+        /// #2 piece.
+        ///
+
+        // get the last relative horizontal index tile of piece.
+
+        max_h_index = -1;
+        for (let c = 4; (c >= 0) && (max_h_index == -1); c--) {
+            for (let l = 0; l < 4; l++) {
+                if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
+                    max_h_index = c;
+                    break;
+                }
+            }
+        }
+
+        // get the first relative horizontal index tile of piece.
+
+        min_h_index = 999;
+        for (let c = 0; (c < 4) && (min_h_index == 999); c++) {
+            for (let l = 0; l < 4; l++) {
+                if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
+                    min_h_index = c;
+                    break;
+                }
+            }
+        }          
+
+        // get the last relative vertical index tile of piece.
+
+        min_v_index = -1;        
+        for (let l = 0; (l < 4) && (min_v_index == -1);  l++) {
+            for (let c = 0; c < 4; c++) {
+                if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
+                    min_v_index = l;
+                    break;
+                }
+            }
+        }
+
+        // get the first relative vertical index tile of piece.
+
+        max_v_index = 999;
+        for (let l = 3; (l >= 0) && (max_v_index == 999);  l--) {
+            for (let c = 0; c < 4; c++) {
+                if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
+                    max_v_index = l;
+                    break;
+                }
+            }
+        }   
+
+        hor_piece_bound =  Math.round(((1+max_h_index-min_h_index) * delta) / 2) ;
+        ver_piece_bound =  Math.round(((1+max_v_index-min_v_index) * delta) / 2) ;
+
         tile.fillStyle = colors[pieces_color_list[1]];
+        
         pox_x_containner = map_width_in_pixels + delta + delta;
         pos_y_containner = delta*6;
+
+        pox_x_containner = pox_x_containner + hor_center - delta - hor_piece_bound;       
+        pos_y_containner = pos_y_containner + ver_center - delta - ver_piece_bound + delta;                      
         
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
                 if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
-                    tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);    
+                    //tile.fillRect(pox_x_containner+((c-min_h_index)*delta), pos_y_containner+(l*delta), delta, delta);
+                    //tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);
+                    tile.fillRect(pox_x_containner+((c-min_h_index)*delta), pos_y_containner+((l-min_v_index)*delta), delta, delta);    
                 }
             }
-        }            
+        }                    
 
     }
 
