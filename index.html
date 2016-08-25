@@ -19,6 +19,7 @@
     "use strict"; 
 
     var current_color = 2;
+    var score = 0;
 
     var pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
     var pos_y = 0; 
@@ -164,7 +165,9 @@
             }
 
             if (count == map_width_in_pieces) {
-                console.log('line complete in: ' + line);
+                score = score + 10;
+                //console.log('line complete in: ' + line);
+                console.log('score: ' + score);
                 clearLine(line);
                 goDownAllMap(line);
                 detectAndDestroyCompleteLines()
@@ -191,7 +194,7 @@
     }
 
     function reset() {
-
+        
         detectAndDestroyCompleteLines();
         pos_y = delta;              
         pos_x = Math.round((delta*(map_width_in_pieces-3))/2);
@@ -474,8 +477,6 @@
         for (let l = 0; l < 4; l++) {
             for (let c = 0; c < 4; c++) {
                 if (pieces[pieces_list[1]][ pieces_angles_list[1] ][l][c] == 1) {             
-                    //tile.fillRect(pox_x_containner+((c-min_h_index)*delta), pos_y_containner+(l*delta), delta, delta);
-                    //tile.fillRect(pox_x_containner+(c*delta), pos_y_containner+(l*delta), delta, delta);
                     tile.fillRect(pox_x_containner+((c-min_h_index)*delta), pos_y_containner+((l-min_v_index)*delta), delta, delta);    
                 }
             }
